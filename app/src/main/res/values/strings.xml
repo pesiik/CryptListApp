@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">CryptListApp</string>
+    <string name="id_test">BTC</string>
+    <string name="name_test">Bitcoin</string>
+    <string name="price_rub_test">12243</string>
+    <string name="price_usd_test">423</string>
+    <string name="rub_label">\u20BD</string>
+    <string name="usd_label">$</string>
+    <string name="deliver"> | </string>
 </resources>

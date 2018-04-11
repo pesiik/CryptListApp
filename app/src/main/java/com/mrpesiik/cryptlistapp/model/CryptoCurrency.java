@@ -1,6 +1,10 @@
 package com.mrpesiik.cryptlistapp.model;
 
-public final class Cryptocurrency {
+import android.support.annotation.NonNull;
+
+import java.io.Serializable;
+
+public final class CryptoCurrency implements Comparable<CryptoCurrency>, Serializable {
 
     private String id;
     private String name;
@@ -9,7 +13,7 @@ public final class Cryptocurrency {
     private double priceRUB;
     private double priceUSD;
 
-    public Cryptocurrency(String id, String name, String symbol, Integer rank, double priceRUB, double priceUSD){
+    public CryptoCurrency(String id, String name, String symbol, Integer rank, double priceRUB, double priceUSD){
         this.id = id;
         this.name = name;
         this.symbol = symbol;
@@ -57,5 +61,10 @@ public final class Cryptocurrency {
 
     public void setPriceUSD(double priceUSD) {
         this.priceUSD = priceUSD;
+    }
+
+    @Override
+    public int compareTo(@NonNull CryptoCurrency o) {
+        return getRank().compareTo(o.getRank());
     }
 }
