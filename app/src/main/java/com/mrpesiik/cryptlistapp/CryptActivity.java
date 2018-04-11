@@ -23,7 +23,8 @@ public class CryptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_crypt);
         currencyManager = new UpdateCurrencyManager();
         ListView listView = (ListView)findViewById(R.id.currency_list);
-        ArrayList<CryptoCurrency> cryptoCurrencies = currencyManager.makeCryptoCurrenciesListFromApiWithRetrofit(this);
+        ArrayList<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
+        currencyManager.makeCryptoCurrenciesListFromApiWithRetrofit(this, cryptoCurrencies);
         adapter= new CryptoCurrencyAdapter(this, R.layout.crypto_currency_item, R.id.id_currency, cryptoCurrencies, this);
         listView.setAdapter(adapter);
     }

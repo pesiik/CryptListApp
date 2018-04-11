@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,7 +28,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UpdateCurrencyManager {
-    private final String API_URL = "https://api.coinmarketcap.com/v1/ticker/?convert=RUB&limit=10";
+    private final String API_URL = "https://api.coinmarketcap.com/";
     GsonBuilder gsonBuilder;
     HttpURLConnection urlConnection;
     String result = "";
@@ -40,44 +42,41 @@ public class UpdateCurrencyManager {
 
     }
 
-    public ArrayList<CryptoCurrency> makeCryptoCurrenciesListFromApiWithRetrofit(Activity activity){
+    public void makeCryptoCurrenciesListFromApiWithRetrofit(Activity activity, ArrayList<CryptoCurrency> cryptoCurrencies){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
-               .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ArrayList<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
         ICurrency iCurrency = retrofit.create(ICurrency.class);
 
-        Call<JSONArray> call = iCurrency.getCryptoCurrencies();
+        Call<List<CryptoCurrency>> call = iCurrency.getCryptoCurrencies();
 
-        call.enqueue(new Callback<JSONArray>() {
+        call.enqueue(new Callback<List<CryptoCurrency>>() {
             @Override
-            public void onResponse(Call<JSONArray> call, Response<JSONArray> response) {
-            JSONArray jsonArray = response.body();
-                for(int i = 0; i< jsonArray.length(); i++) {
+            public void onResponse(Call<List<CryptoCurrency>> call, Response<List<CryptoCurrency>> response) {
+
+                List<CryptoCurrency> cryptoCurrenciesBuffer = response.body();
+                for(int i = 0; i< cryptoCurrenciesBuffer.size(); i++) {
                     try {
-                        JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                        String id = jsonObject.getString("id");
-                        String name = jsonObject.getString("name");
-                        String symbol = jsonObject.getString("symbol");
-                        Integer rank = jsonObject.getInt("rank");
-                        double priceRUB = jsonObject.getDouble("price_rub");
-                        double priceUSD = jsonObject.getDouble("price_usd");
-                        CryptoCurrency cryptoCurrency = new CryptoCurrency(id, name, symbol, rank, priceRUB, priceUSD);
+                        CryptoCurrency cryptoCurrency = cryptoCurrenciesBuffer.get(i);
                         cryptoCurrencies.add(cryptoCurrency);
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                 }
+
             }
 
             @Override
-            public void onFailure(Call<JSONArray> call, Throwable t) {
+            public void onFailure(Call<List<CryptoCurrency>> call, Throwable t) {
+                String message = t.getMessage();
+                String message2 = call.toString();
                 Toast.makeText(activity, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        return cryptoCurrencies;
+
     }
 }
 
